@@ -13,12 +13,12 @@ class CategoryController extends Controller
         try { 
         $seoTags = json_decode($request->input('seo_teg'), true);
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:50000',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp',
             'seo_teg' => 'nullable|json',
-            'total_video' => 'nullable|string|max:255',
+            'total_video' => 'nullable|string|max:50000',
             'category_star_rate' => 'nullable|numeric|min:0|max:5',
-            'sorting_postion' => 'nullable|integer',
+            'sorting_position' => 'nullable|integer',
         ]);
 
         if (strpos($request['image'], '.jpg') !== false || strpos($request['image'], '.png') !== false || strpos($request['image'], '.jpeg') !== false || strpos($request['image'], '.webp') !== false) {
@@ -41,9 +41,9 @@ class CategoryController extends Controller
             'name' => $request->name,
             'image' => $photo,
             'seo_teg' => $seoTags,
-            'total_video' => $request->total_video,
+            'total_video' => 0,
             'category_star_rate' => $request->category_star_rate,
-            'sorting_postion' => $request->sorting_postion,
+            'sorting_position' => $request->sorting_position,
         ]);
 
         return response()->json([
@@ -69,11 +69,10 @@ class CategoryController extends Controller
            
             $seoTags = json_decode($request->input('seo_teg'), true);
             $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:50000',
                 'seo_teg' => 'nullable|json',
-                'total_video' => 'nullable|string|max:255',
                 'category_star_rate' => 'nullable|numeric|min:0|max:5',
-                'sorting_postion' => 'nullable|integer',
+                'sorting_position' => 'nullable|integer',
             ]);
             if (strpos($request['image'], '.jpg') !== false || strpos($request['image'], '.png') !== false || strpos($request['image'], '.jpeg') !== false || strpos($request['image'], '.webp') !== false) {
                 $photo = $request['image'];
@@ -103,9 +102,8 @@ class CategoryController extends Controller
             'name' => $request->name,
             'image' => $photo,
             'seo_teg' => $seoTags,
-            'total_video' => $request->total_video,
             'category_star_rate' => $request->category_star_rate,
-            'sorting_postion' => $request->sorting_postion,
+            'sorting_position' => $request->sorting_position,
         ]);
 
         return response()->json([
@@ -155,7 +153,7 @@ class CategoryController extends Controller
     // Get all categories (sorted A to Z)
     public function getAll()
     {
-        $categories = Category::orderBy('name', 'asc')->get();
+        $categories = Category::select('id', 'name')->orderBy('name', 'asc')->get();
         return response()->json([
             'success' => true,
             'message' => 'Categories retrieved successfully',

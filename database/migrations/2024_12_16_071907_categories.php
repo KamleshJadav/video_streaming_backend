@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->id(); // Auto-increment ID
+            $table->id(); 
             $table->string('name')->nullable();
             $table->string('image')->nullable();
             $table->json('seo_teg')->nullable(); 
-            $table->string('total_video')->nullable();
+            $table->string('total_video')->default(0);
             $table->float('category_star_rate', 8, 2)->nullable(); 
-            $table->integer('sorting_postion')->nullable();
+            $table->integer('sorting_position')->nullable();
             $table->timestamps(); 
         });
     }
