@@ -4,11 +4,22 @@ use App\Http\Controllers\ActorController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\BannerController;
+use App\Http\Middleware\JwtMiddleware;
+
+
+Route::post('user/login', [UserController::class, 'login']); 
+Route::post('user/register', [UserController::class, 'register']); 
+Route::get('user/check-admin', [UserController::class, 'checkAdmin']); 
+
+// Route::middleware([JwtMiddleware::class])->group(function () {
 
 Route::post('categories/add', [CategoryController::class, 'add']); 
 Route::post('categories/update', [CategoryController::class, 'update']); 
 Route::delete('categories/delete/{id}', [CategoryController::class, 'delete']); 
-Route::get('categories/all', [CategoryController::class, 'getAll']); 
+Route::get('categories/all', [CategoryController::class, 'getAll']);  // used in Mobile 
 Route::get('categories/paginated', [CategoryController::class, 'getPaginated']); 
 Route::get('categories/{id}', [CategoryController::class, 'getById']); 
 
@@ -40,5 +51,28 @@ Route::get('images/all', [ImageController::class, 'getAll']);
 Route::get('images/paginated', [ImageController::class, 'getPaginated']); 
 Route::get('images/{id}', [ImageController::class, 'getById']); 
 
+Route::post('user/update', [UserController::class, 'update']); 
+Route::post('user/change-password', [UserController::class, 'changePassword']); 
+
+Route::post('banner/add', [BannerController::class, 'add']); 
+Route::post('banner/update', [BannerController::class, 'update']); 
+Route::delete('banner/delete/{id}', [BannerController::class, 'delete']); 
+Route::get('banner/all', [BannerController::class, 'getAll']); 
+Route::get('banner/paginated', [BannerController::class, 'getPaginated']); 
+Route::get('banner/{id}', [BannerController::class, 'getById']); 
+Route::get('banner/update-status', [BannerController::class, 'updateStatus']); 
+Route::get('banner/get-active-banner', [BannerController::class, 'getAllActiveBanner']); 
+
+// });
 
 
+// used in mobile 
+
+Route::post('mobile/wishlist/add', [WishlistController::class, 'add']); 
+Route::post('mobile/wishlist/remove', [WishlistController::class, 'remove']); 
+Route::post('mobile/wishlist/get-paginated', [WishlistController::class, 'getPaginated']); 
+Route::get('mobile/categories/all', [CategoryController::class, 'getAll']); 
+Route::get('mobile/videos/popular', [VideoController::class, 'getPopular']); 
+Route::get('mobile/videos/tradding', [VideoController::class, 'getTradding']); 
+Route::get('mobile/videos/get-mobile-paginated', [VideoController::class, 'getMobilePaginated']); 
+Route::get('mobile/videos/get-by-id-mobile/{id}', [VideoController::class, 'getByIdMobile']); 

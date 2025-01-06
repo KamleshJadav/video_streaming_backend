@@ -7,7 +7,6 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
-    // Add a category
     public function add(Request $request)
     {
         try { 
@@ -153,7 +152,7 @@ class CategoryController extends Controller
     // Get all categories (sorted A to Z)
     public function getAll()
     {
-        $categories = Category::select('id', 'name')->orderBy('name', 'asc')->get();
+        $categories = Category::orderBy('name', 'asc')->get();
         return response()->json([
             'success' => true,
             'message' => 'Categories retrieved successfully',
@@ -197,4 +196,6 @@ class CategoryController extends Controller
             'data' => $category
         ], 200);
     }
+
+
 }

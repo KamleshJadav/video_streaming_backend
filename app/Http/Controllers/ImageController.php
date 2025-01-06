@@ -28,6 +28,8 @@ class ImageController extends Controller
                  'channel_id' => 'nullable|string',
                  'views' => 'nullable|integer',
                  'likes' => 'nullable|integer',
+                 'trending' => 'nullable|boolean', // Optional, must be a boolean
+                 'popular' => 'nullable|boolean', // Optional, must be a boolean
              ]);
  
              // Create a new video
@@ -41,6 +43,10 @@ class ImageController extends Controller
                  'channel_id' => $request->channel_id,
                  'views' => $request->views,
                  'likes' => $request->likes,
+                 'trending' => (int)$request->trending,
+                 'popular' => (int)$request->popular,
+                 'trending' => 'nullable|boolean', // Optional, must be a boolean
+                 'popular' => 'nullable|boolean', // Optional, must be a boolean
              ]);
  
              // Update total_image counts
@@ -69,7 +75,7 @@ class ImageController extends Controller
              $images = json_decode($request->input('images'), true);
  
              $request->validate([
-                 'id' => 'required|exists:videos,id',
+                 'id' => 'required|exists:images,id',
                  'title' => 'required|string|max:5000',
                  'seo_teg' => 'nullable|json',
                  'images' => 'nullable|json',
@@ -101,6 +107,8 @@ class ImageController extends Controller
                  'channel_id' => $request->channel_id,
                  'views' => $request->views,
                  'likes' => $request->likes,
+                 'trending' => $request->trending,
+                 'popular' => $request->popular,
              ]);
  
              // Update total_image counts
@@ -115,6 +123,7 @@ class ImageController extends Controller
              return response()->json([
                  'success' => false,
                  'error' => 'Failed to update images',
+                 'error1' => $e,
                  'message' => $e->getMessage(),
              ], 500);
          }
@@ -213,6 +222,8 @@ class ImageController extends Controller
                      'likes' => $video->likes,
                      'description' => $video->description,
                      'seo_teg' => $video->seo_teg,
+                     'trending' => (int)$video->trending,
+                     'popular' => (int)$video->popular,
                      'created_at' => $video->created_at,
                      'updated_at' => $video->updated_at,
                  ];

@@ -22,6 +22,9 @@ class Video extends Model
         'views', 
         'likes', 
         'description', 
+        'trending',
+        'popular',
+        'thumb_name',
         'seo_teg'
     ];
 

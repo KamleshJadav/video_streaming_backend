@@ -27,6 +27,9 @@ class VideoController extends Controller
                 'channel_id' => 'nullable|string',
                 'views' => 'nullable|integer',
                 'likes' => 'nullable|integer',
+                'trending' => 'nullable|boolean', // Optional, must be a boolean
+                'popular' => 'nullable|boolean', // Optional, must be a boolean
+                'thumb_name' => 'required|string|max:5000', // Required, string, max 255 characters
             ]);
 
             // Create a new video
@@ -40,6 +43,9 @@ class VideoController extends Controller
                 'channel_id' => $request->channel_id,
                 'views' => $request->views,
                 'likes' => $request->likes,
+                'trending' => (int)$request->trending,
+                'popular' => (int)$request->popular,
+                'thumb_name' => $request->thumb_name,
             ]);
 
             // Update total_video counts
@@ -77,6 +83,9 @@ class VideoController extends Controller
                 'channel_id' => 'nullable|string',
                 'views' => 'nullable|integer',
                 'likes' => 'nullable|integer',
+                'trending' => 'nullable|boolean', // Optional, must be a boolean
+                'popular' => 'nullable|boolean', // Optional, must be a boolean
+                'thumb_name' => 'required|string|max:5000', // Required, string, max 255 characters
             ]);
 
             // Find the video by ID
@@ -97,6 +106,9 @@ class VideoController extends Controller
                 'category_id' => $request->category_id,
                 'channel_id' => $request->channel_id,
                 'views' => $request->views,
+                'trending' => (int)$request->trending,
+                'popular' => (int)$request->popular,
+                'thumb_name' => $request->thumb_name,
                 'likes' => $request->likes,
             ]);
 
@@ -210,6 +222,9 @@ class VideoController extends Controller
                     'channel_name' => $video->channel->name,  
                     'channel_id' => $video->channel_id,  
                     'views' => $video->views,
+                    'trending' => $video->trending,
+                    'popular' => $video->popular,
+                    'thumb_name' => $video->thumb_name,
                     'likes' => $video->likes,
                     'description' => $video->description,
                     'seo_teg' => $video->seo_teg,
@@ -230,9 +245,9 @@ class VideoController extends Controller
     // Get an actor by ID
     public function getById($id)
     {
-        $actor = Video::find($id);
+        $video = Video::find($id);
 
-        if (!$actor) {
+        if (!$video) {
             return response()->json([
                 'success' => false,
                 'message' => 'Actor not found'
@@ -242,13 +257,13 @@ class VideoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Actor retrieved successfully',
-            'data' => $actor
+            'data' => $video
         ], 200);
     }
 
     public function getAll()
     {
-        $videos = Video::select('id', 'name')->orderBy('name', 'asc')->get();
+        $videos = Video::select('id', 'name')->orderBy('title', 'asc')->get();
         $formattedVideos = $videos->map(function ($video) {
             $actorNames = Actor::whereIn('id',$video->actor_id)->get(['id', 'name']);
             return [
@@ -273,5 +288,119 @@ class VideoController extends Controller
             'message' => 'Videos retrieved successfully',
             'data' => $formattedVideos
         ], 200);
+    }  
+    
+    public function getPopular()
+    {
+
+        $videos = Video::where('popular', 1)
+                ->take(7)
+                ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Videos retrieved successfully',
+            'data' => $videos
+        ], 200);
     }
+    
+    public function getTradding()
+    {
+
+        $videos = Video::where('trending', 1)
+                ->take(7)
+                ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Videos retrieved successfully',
+            'data' => $videos
+        ], 200);
+    }
+
+    public function getMobilePaginated(Request $request)
+    {
+        $page = $request->get('page', 1); 
+        $perPage = $request->get('pageSize', 7); 
+    
+        $tradding = $request->get('tradding', 0); 
+        $popular = $request->get('popular', 0); 
+        $category_id = $request->get('category_id', 0); 
+    
+        // Build the query
+        $query = Video::orderBy('created_at', 'desc');
+    
+        // Apply conditional filters
+        if ($tradding) {
+            $query->where('trending', $tradding);
+        }
+    
+        if ($popular) {
+            $query->where('popular', $popular);
+        }
+    
+        if ($category_id) {
+            $query->where('category_id', $category_id);
+        }
+    
+        // Paginate the results
+        $videos = $query->paginate($perPage, ['*'], 'page', $page);
+    
+        // Format the videos
+        $formattedVideos = $videos->map(function ($video) {
+            $actorNames = Actor::whereIn('id', $video->actor_id)->get(['id', 'name']);
+    
+            return [
+                'id' => $video->id,
+                'title' => $video->title,
+                'video' => $video->video,
+                'actors' => $actorNames,
+                'category_name' => $video->category->name,
+                'category_id' => $video->category_id,
+                'channel_name' => $video->channel->name,
+                'channel_id' => $video->channel_id,
+                'views' => $video->views,
+                'trending' => $video->trending,
+                'popular' => $video->popular,
+                'thumb_name' => $video->thumb_name,
+                'likes' => $video->likes,
+                'description' => $video->description,
+                'seo_teg' => $video->seo_teg,
+                'created_at' => $video->created_at,
+                'updated_at' => $video->updated_at,
+            ];
+        });
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Videos fetched successfully',
+            'current_page' => $videos->currentPage(),
+            'data' => $formattedVideos,
+            'total_records' => $videos->total()
+        ]);
+    }
+    
+    // Get a video by ID with full actor details
+    public function getByIdMobile($id)
+    {
+        $video = Video::find($id);
+
+        if (!$video) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Video not found'
+            ], 404);
+        }
+
+        // Fetch actor details based on actor_id (if you store it as a JSON array or comma-separated string)
+        $actorIds = $video->actor_id; // Assuming actor_ids are stored as a JSON array
+        $actors = Actor::whereIn('id', $actorIds)->get(); // Add any other actor details you want
+        $video->actors = $actors;
+        return response()->json([
+            'success' => true,
+            'message' => 'Video retrieved successfully 21',
+            'data' => $video,
+        ], 200);
+    }
+
 }
