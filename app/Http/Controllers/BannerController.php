@@ -94,7 +94,7 @@ class BannerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Banner not found'
-            ], 404);
+            ], 500);
         }
 
         $bannerData->update([
@@ -130,7 +130,7 @@ class BannerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Banner not found'
-            ], 404);
+            ], 500);
         }
 
         $banner->delete();
@@ -189,7 +189,7 @@ class BannerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Category not found'
-            ], 404);
+            ], 500);
         }
 
         return response()->json([
@@ -215,7 +215,7 @@ class BannerController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Banner not found',
-                ], 404);
+                ], 500);
             }
 
             // Update only the 'is_active' field
@@ -253,7 +253,7 @@ class BannerController extends Controller
                 'success' => false,
                 'error' => 'Failed to retrieved banner',
                 'message' => $e->getMessage()
-            ], 200);
+            ], 500);
         }
        
     }

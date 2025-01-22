@@ -247,7 +247,7 @@ class ImageController extends Controller
              return response()->json([
                  'success' => false,
                  'message' => 'Images not found'
-             ], 404);
+             ], 500);
          }
  
          return response()->json([

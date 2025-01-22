@@ -6,6 +6,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BannerController;
 use App\Http\Middleware\JwtMiddleware;
 
@@ -13,6 +14,7 @@ use App\Http\Middleware\JwtMiddleware;
 Route::post('user/login', [UserController::class, 'login']); 
 Route::post('user/register', [UserController::class, 'register']); 
 Route::get('user/check-admin', [UserController::class, 'checkAdmin']); 
+Route::get('user/paginated', [UserController::class, 'getPaginated']);  
 
 // Route::middleware([JwtMiddleware::class])->group(function () {
 
@@ -63,16 +65,27 @@ Route::get('banner/{id}', [BannerController::class, 'getById']);
 Route::get('banner/update-status', [BannerController::class, 'updateStatus']); 
 Route::get('banner/get-active-banner', [BannerController::class, 'getAllActiveBanner']); 
 
+Route::post('notification/add', [NotificationController::class, 'add']); 
+Route::post('notification/add-all-user', [NotificationController::class, 'addAllUser']); 
+Route::post('notification/update', [NotificationController::class, 'update']); 
+Route::delete('notification/delete/{id}', [NotificationController::class, 'delete']); 
+Route::get('notification/all', [NotificationController::class, 'getAll']); 
+Route::get('notification/paginated', [NotificationController::class, 'getPaginated']); 
+Route::get('notification/{id}', [NotificationController::class, 'getById']); 
+
 // });
 
 
 // used in mobile 
-
 Route::post('mobile/wishlist/add', [WishlistController::class, 'add']); 
 Route::post('mobile/wishlist/remove', [WishlistController::class, 'remove']); 
-Route::post('mobile/wishlist/get-paginated', [WishlistController::class, 'getPaginated']); 
+Route::post('mobile/wishlist/toggle', [WishlistController::class, 'toggle']); 
+Route::get('mobile/wishlist/get-paginated', [WishlistController::class, 'getPaginated']); 
+Route::post('mobile/wishlist/get-all', [WishlistController::class, 'getAll']); 
+
 Route::get('mobile/categories/all', [CategoryController::class, 'getAll']); 
 Route::get('mobile/videos/popular', [VideoController::class, 'getPopular']); 
 Route::get('mobile/videos/tradding', [VideoController::class, 'getTradding']); 
 Route::get('mobile/videos/get-mobile-paginated', [VideoController::class, 'getMobilePaginated']); 
-Route::get('mobile/videos/get-by-id-mobile/{id}', [VideoController::class, 'getByIdMobile']); 
+Route::get('mobile/videos/get-by-id-mobile', [VideoController::class, 'getByIdMobile']); 
+Route::get('mobile/notification/user-all-notification', [NotificationController::class, 'userAllNotification']); 

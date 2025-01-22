@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Video;
 use App\Models\Category;
 use App\Models\Actor;
+use App\Models\WishlistVideo;
 use App\Models\Channel;
 
 class VideoController extends Controller
@@ -251,7 +252,7 @@ class VideoController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Actor not found'
-            ], 404);
+            ], 200);
         }
 
         return response()->json([
@@ -381,24 +382,34 @@ class VideoController extends Controller
     }
     
     // Get a video by ID with full actor details
-    public function getByIdMobile($id)
+    public function getByIdMobile(Request $request)
     {
-        $video = Video::find($id);
-
+        $video_id = $request->get('video_id', 1); 
+        $user_id = $request->get('user_id', 7); 
+        $video = Video::find($video_id);
         if (!$video) {
             return response()->json([
                 'success' => false,
                 'message' => 'Video not found'
-            ], 404);
+            ], 200);
         }
 
-        // Fetch actor details based on actor_id (if you store it as a JSON array or comma-separated string)
-        $actorIds = $video->actor_id; // Assuming actor_ids are stored as a JSON array
-        $actors = Actor::whereIn('id', $actorIds)->get(); // Add any other actor details you want
+        $actorIds = $video->actor_id; 
+        $actors = Actor::whereIn('id', $actorIds)->get();
         $video->actors = $actors;
+        
+        $isInWishlist = false;
+        if ($user_id) {
+            $isInWishlist = WishlistVideo::where('user_id', $user_id)
+                                    ->where('video_id', $video_id)
+                                    ->exists();
+            $video->isInWishlist = $isInWishlist;
+        }
+
+
         return response()->json([
             'success' => true,
-            'message' => 'Video retrieved successfully 21',
+            'message' => 'Video retrieved successfully.',
             'data' => $video,
         ], 200);
     }

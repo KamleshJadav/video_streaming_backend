@@ -11,14 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id(); 
-            $table->string('title')->nullable();
-            $table->string('message')->nullable();
+        Schema::table('users', function (Blueprint $table) {
             $table->boolean('is_active')->default(true)->nullable();
-            $table->string('redirect_url')->nullable(); 
-            $table->json('user_ids')->nullable(); 
-            $table->timestamps(); 
         });
     }
 
@@ -27,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_active'); 
+        });
     }
 };

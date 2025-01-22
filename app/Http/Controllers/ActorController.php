@@ -11,7 +11,6 @@ class ActorController extends Controller
     // Add a new actor
     public function add(Request $request)
     {
-        $seoTags = json_decode($request->input('seo_teg'), true);
         try {
             // Decode SEO tags if present
             $seoTags = json_decode($request->input('seo_teg'), true);
@@ -69,7 +68,7 @@ class ActorController extends Controller
                 'success' => true,
                 'message' => 'Actor added successfully',
                 'data' => $actor
-            ], 201);
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -216,7 +215,7 @@ class ActorController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Actor not found'
-            ], 404);
+            ], 500);
         }
 
         return response()->json([

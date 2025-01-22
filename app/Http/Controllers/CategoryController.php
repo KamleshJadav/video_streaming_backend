@@ -94,7 +94,7 @@ class CategoryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Category not found'
-            ], 404);
+            ], 500);
         }
 
         $category->update([
@@ -130,7 +130,7 @@ class CategoryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Category not found'
-            ], 404);
+            ], 500);
         }
 
         $category->delete();
@@ -187,7 +187,7 @@ class CategoryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Category not found'
-            ], 404);
+            ], 500);
         }
 
         return response()->json([

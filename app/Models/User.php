@@ -19,6 +19,7 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'fcm_token',
         'role',
     ];
 

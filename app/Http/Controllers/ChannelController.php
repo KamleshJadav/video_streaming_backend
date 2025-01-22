@@ -206,7 +206,7 @@ class ChannelController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Channel not found'
-            ], 404);
+            ], 500);
         }
 
         return response()->json([

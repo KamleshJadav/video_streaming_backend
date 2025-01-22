@@ -44,6 +44,9 @@ class Video extends Model
     {
         return $this->belongsTo(Channel::class);
     }
-    
+    public function actors()
+    {
+        return $this->belongsToMany(Actor::class, 'actor_video', 'video_id', 'actor_id');
+    }
  
 }

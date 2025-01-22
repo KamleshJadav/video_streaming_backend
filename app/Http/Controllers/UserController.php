@@ -178,14 +178,14 @@ class UserController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'User not found',
-                ], 404);
+                ], 500);
             }
             
             if (!Hash::check($request->current_password, $user->password)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Current password is incorrect',
-                ], 200);
+                ], 500);
             }
           
             $user->update([
@@ -205,4 +205,59 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function saveFcmToken(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'user_id' => 'required|integer|exists:users,id', 
+                'fcm_token' => 'required|string', 
+            ]);
+
+            // Find the user by the provided ID
+            $user = User::findOrFail($request->user_id);
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save FCM token',
+                ], 500);
+            }
+
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'FCM token saved successfully.',
+                'data' => $user,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to save FCM token',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Get paginated actors (latest first)
+    public function getPaginated(Request $request)
+    {
+        $page = $request->get('page', 1); 
+        $perPage = $request->get('pageSize', 7); 
+
+        $user = User::orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User fetched successfully',
+            'current_page' => $user->currentPage(),
+            'data' => $user->items(),
+            'total_records' => $user->total()
+        ]);
+    }
+
 }

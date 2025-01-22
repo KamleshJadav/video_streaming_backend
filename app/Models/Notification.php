@@ -11,5 +11,11 @@ class Notification extends Model
         'title',
         'redirect_url',
         'message',
+        'is_active',
+        'redirect_url',
+        'user_ids',
+    ];
+    protected $casts = [
+        'user_ids' => 'array', 
     ];
 }
